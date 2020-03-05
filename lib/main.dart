@@ -1,51 +1,82 @@
 import 'package:flutter/material.dart';
+import 'package:wordpress_integration_flutter/Pages.dart';
 
-void main() => runApp(MyApp());
+import 'Post.dart';
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+void main() => runApp(new MaterialApp(
+    home:HomePage()));
+
+class HomePage extends StatefulWidget{
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-
-        primarySwatch: Colors.blue,
-      ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
-    );
+  HomePageState createState() {
+    // TODO: implement createState
+    return HomePageState();
   }
 }
-
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-  final String title;
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-
+class HomePageState extends State<HomePage>{
   @override
   Widget build(BuildContext context) {
-
-    return Scaffold(
-      appBar: AppBar(
-
-        title: Text(widget.title),
-      ),
-      body: Center(
-
-        child: Column(
-
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-
-          ],
+    // TODO: implement build
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text("Home Page"),
+          backgroundColor: Colors.black54,
+        ),
+        body: Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.all(30),
+                child: RaisedButton(
+                  child: Text("Post"),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)
+                  ),
+                  color: Colors.black26,
+                  textColor: Colors.white,
+                  onPressed: (){
+                    Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                        builder: (context) => new MyPostPage(),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(30),
+                child: RaisedButton(
+                  child: Text("Pages"),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)
+                  ),
+                  color: Colors.black26,
+                  textColor: Colors.white,
+                  onPressed: (){
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MyPage(),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ),
-     // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+
 }
+
+
+
+
+
+
