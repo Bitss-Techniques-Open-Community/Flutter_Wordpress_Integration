@@ -23,7 +23,7 @@ class PostDetailState extends State<PostDetail> {
   var htmlContent;
   var itemTitle, itemID;
   Future<PostInfo> post;
-  
+
   PostDetailState({this.itemID, this.itemTitle});
   @override
   void initState() {
@@ -68,32 +68,42 @@ class PostDetailState extends State<PostDetail> {
                                 return Padding(
                                   padding: EdgeInsets.all(10),
                                   child: HtmlWidget(
-                                    snapshot.data.postInfo["content"]["rendered"]+"\n\n"+snapshot.data.postInfo["excerpt"]["rendered"],
+                                    snapshot.data.postInfo["content"]
+                                            ["rendered"] +
+                                        "\n\n" +
+                                        snapshot.data.postInfo["excerpt"]
+                                            ["rendered"],
                                     enableCaching: false,
                                     hyperlinkColor: Colors.blue,
-                                    onTapUrl: (url) => url.contains(API.BASE_URL)?Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => AppBrowser(url),
-
-
-                                      ),
-                                    ): showDialog(
-                                      context: context,
-                                      builder: (_) => AlertDialog(
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                        content: Text(url),
-                                        actions: <Widget>[
-                                          FlatButton(
-                                            child: Text("Open"),
-                                            onPressed: () {
-                                              launch(url);
-
-                                            },
-                                          )
-                                        ],
-                                      ),
-                                    ),
+                                    onTapUrl: (url) =>
+                                        (url.contains(API.BASE_URL) ||
+                                                url.contains(
+                                                    "http://priyanka.guru/"))
+                                            ? Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      SubDetails(url),
+                                                ),
+                                              )
+                                            : showDialog(
+                                                context: context,
+                                                builder: (_) => AlertDialog(
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10)),
+                                                  content: Text(url),
+                                                  actions: <Widget>[
+                                                    FlatButton(
+                                                      child: Text("Open"),
+                                                      onPressed: () {
+                                                        launch(url);
+                                                      },
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
                                     //html: htmlContent,
                                   ),
                                 );
@@ -118,7 +128,7 @@ class PostDetailState extends State<PostDetail> {
 
   Future<PostInfo> getPostInfo() async {
     try {
-      String url = API.BASE_URL+API.POST_INFO + itemID.toString();
+      String url = API.BASE_URL + API.POST_INFO + itemID.toString();
       final response = await http.get(url);
       if (response.statusCode == 200) {
         // If the call to the server was successful, parse the JSON.

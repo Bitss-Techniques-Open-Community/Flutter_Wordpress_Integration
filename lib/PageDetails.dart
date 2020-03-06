@@ -72,11 +72,11 @@ class PageDetailState extends State<PageDetail> {
                                         snapshot.data.pagetInfo["content"]["rendered"]+"\n\n"+snapshot.data.pagetInfo["excerpt"]["rendered"],
                                         enableCaching: false,
                                         hyperlinkColor: Colors.blue,
-                                        onTapUrl: (url) => url.contains(API.BASE_URL)?
+                                        onTapUrl: (url) => (url.contains(API.BASE_URL)||url.contains("http://priyanka.guru/"))?
                                         Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => AppBrowser(url),
+                                          builder: (context) => SubDetails(url),
                                         ),
                                       )
                                             :showDialog(
