@@ -9,7 +9,7 @@ class API{
   //wordpress posts
   static String Post="wp-json/wp/v2/posts?_fields=id,title,date,featured_media,categories";
   static String POST_INFO="wp-json/wp/v2/posts/";
-  static String ALL_CATEGORY="wp-json/wp/v2/categories/";
+  static String ALL_CATEGORY="wp-json/wp/v2/categories?per_page=100";
 
 
 

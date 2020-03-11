@@ -19,218 +19,359 @@ class MyPostPage extends StatefulWidget {
 }
 
 class MyPostPageState extends State<MyPostPage> {
-  List<String> postThumbnail = new List();
-  Future<Posts> post;
+
+  //Future<Posts> post;
+  Future<Posts> serach;
   bool dataLoaded = false;
   bool imageLoaded = false;
   bool isLoading = false;
   bool recordFinish = false;
+  bool searching = false;
+  bool isSearch = false;
   static int MAX_VALUE_LIST; // = 3;
+  var searchController = new TextEditingController(text: '');
+  List<String> postTitle;
+  List<String> postDate;
+  List<String> postCategory;
+  List<String> postThumbnail;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    MAX_VALUE_LIST = 3;
+    MAX_VALUE_LIST = 10;
     dataLoaded = false;
-    postThumbnail.clear();
+    searching = false;
+    isSearch = false;
+    postTitle = new List();
+    postDate = new List();
+    postCategory = new List();
+    postThumbnail= new List();
+    searchController.text="";
+    //postThumbnail.clear();
     getAllCategory();
-    post = getAllPost();
-
+    getAllPost();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white70,
-      appBar: AppBar(
+    return MaterialApp(
+      home: Scaffold(
+        backgroundColor: Colors.white60,
+        appBar: AppBar(
           backgroundColor: Colors.black54,
-          title: Text("All posts"),
+          title: !isSearch
+              ? Text("All posts")
+              : TextField(
+                  decoration: InputDecoration(
+                    //icon: Icon(Icons.search,color: Colors.white,),
+                    hintText: "Search post here",
+                    hintStyle: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                  style: TextStyle(color: Colors.white),
+                  controller: searchController,
+                  onChanged: _change,
+                  textInputAction: TextInputAction.go,
+                  cursorColor: Colors.white,
+                  textAlign: TextAlign.start,
+                ),
           leading: IconButton(
             onPressed: () {
               Navigator.pop(context);
             },
             icon: Icon(Icons.arrow_back),
-          )),
-      body: Center(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Expanded(
-                  child: NotificationListener<ScrollNotification>(
-                onNotification: (ScrollNotification scrollInfo) {
-                  if (!isLoading &&
-                      scrollInfo.metrics.pixels ==
-                          scrollInfo.metrics.maxScrollExtent) {
-                    _loadData();
-                    // start loading data
-                    setState(() {
-                      isLoading = true;
-                    });
-                  }
-                  //return ;
-                },
-                child: dataLoaded
-                    ? FutureBuilder<Posts>(
-                        future: post,
-                        builder: (context, snap) {
-                          if (snap.hasData) {
-                            return ListView.builder(
-                                itemCount: MAX_VALUE_LIST,
-                                itemBuilder: (context, int index) {
-                                  return new Card(
-                                    color: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(10)),
-                                    ),
-                                    child: ListTile(
-                                      leading:    ConstrainedBox(
-                                        constraints: BoxConstraints(
-                                          maxWidth: 150,
-                                          maxHeight: 150,
+          ),
+          actions: <Widget>[
+            isSearch
+                ? IconButton(
+                    icon: Icon(
+                      Icons.cancel,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      Utility.showMsg("search");
+                      setState(() {
+                        this.isSearch = false;
+                      });
+                    },
+                  )
+                : IconButton(
+                    icon: Icon(
+                      Icons.search,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      Utility.showMsg("search");
+                      setState(() {
+                        this.isSearch = true;
+                      });
+                    },
+                  ),
+          ],
+        ),
+        body: Center(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                //  title.length<0?
+                (!searching )
+                    ? Expanded(
+                        child: NotificationListener<ScrollNotification>(
+                            onNotification: (ScrollNotification scrollInfo) {
+                              if (!isLoading &&
+                                  scrollInfo.metrics.pixels ==
+                                      scrollInfo.metrics.maxScrollExtent) {
+                                _loadData();
+                                // start loading data
+                                setState(() {
+                                  isLoading = true;
+                                });
+                              }
+                              //return ;
+                            },
+                            child: dataLoaded?
+                            ListView.builder(
+                                      itemCount: postTitle.length,
+                                      itemBuilder: (context, int index) {
+                                        //var data = snap.data.postInfo[index];
+                                        return new Card(
+                                            color: Colors.white,
+                                            clipBehavior: Clip.antiAlias,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(10)),
+                                            ),
+                                            child: ListTile(
+                                              leading: Image(
+                                                image: (postThumbnail[index] != null &&
+
+                                                        postThumbnail[index] !=
+                                                            "")
+                                                    ? new NetworkImage(
+                                                        postThumbnail[index])
+                                                    : new AssetImage(
+                                                        "assets/na.png"),
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.25,
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.25,
+                                                fit: BoxFit.cover,
+                                              ),
+
+                                              title: new Padding(
+                                                padding:
+                                                    new EdgeInsets.all(2.0),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .stretch,
+                                                  children: <Widget>[
+                                                    Text(
+                                                      postTitle[index].toString(),
+                                                      // postTitles[index].toString(),
+                                                      style: new TextStyle(
+                                                          fontSize: 18.0,
+                                                          color: Colors.black87,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontStyle:
+                                                              FontStyle.italic),
+                                                    ),
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: <Widget>[
+//                                                        Padding(
+//                                                          padding:
+//                                                              EdgeInsets.all(2),
+//                                                          child: Wrap(
+//                                                            children:
+////                                                                _buildButtonsWithNames(
+////                                                                    data[
+////                                                                        "categories"],
+////                                                                    data["id"]),
+//                                                          ),
+//                                                        )
+                                                      ],
+                                                    ),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.end,
+                                                      children: <Widget>[
+                                                        Text(
+                                                          date(postDate[index].toString()),
+                                                          style: new TextStyle(
+                                                              fontSize: 12.0,
+                                                              color: Colors
+                                                                  .black54,
+                                                              fontStyle:
+                                                                  FontStyle
+                                                                      .italic),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              onTap: () {
+//                                                Navigator.push(
+//                                                  context,
+//                                                  MaterialPageRoute(
+//                                                    builder: (context) =>
+//                                                        PostDetail(
+//                                                            data["id"]
+//                                                                .toString(),
+//                                                            data["title"]
+//                                                                    ["rendered"]
+//                                                                .toString()),
+//                                                  ),
+//                                                );
+                                              },
+                                            ));
+                                      })
+                          :Center(child: CircularProgressIndicator(),),
+
+
+                            ),
+
+                )
+                    :(searchTitle.length >0 )? Expanded(
+                          child:  ListView.builder(
+                                    itemCount: searchTitle.length,
+                                    itemBuilder: (context, int index) {
+                                      return new Card(
+                                        color: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10)),
                                         ),
-                                        child: Image(
-                                            image: (postThumbnail[index] !=
-                                                null &&
-                                                postThumbnail[index] != "")
-                                                ? new NetworkImage(
-                                                postThumbnail[index])
-                                                : new AssetImage(
-                                                "assets/na.png"),
-                                            width: 100.0,
-                                            height: 150.0,fit: BoxFit.fill,),
-
-                                      ) ,
-
-
-
-                                      title: new Padding(
-                                        padding: new EdgeInsets.all(5.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Text(
-                                              snap
-                                                  .data
-                                                  .postInfo[index]["title"]
-                                                      ["rendered"]
-                                                  .toString(),
-                                              // postTitles[index].toString(),
-                                              style: new TextStyle(
-                                                  fontSize: 18.0,
-                                                  color: Colors.black87,fontWeight: FontWeight.bold,
-                                                  fontStyle: FontStyle.italic),
-                                            ),
-                                            Column(
-                                              children: <Widget>[
-                                                Padding(
-                                                  padding: EdgeInsets.all(2),
-                                                  child: Wrap(
-                                                    children:
-                                                        _buildButtonsWithNames(
-                                                            snap.data.postInfo[
-                                                                    index]
-                                                                ["categories"],snap.data.postInfo[
-                                                        index]["id"]),
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                            Row(
-
-                                              mainAxisAlignment: MainAxisAlignment.end,
+                                        child: ListTile(
+                                          leading: new CircleAvatar(
+                                            maxRadius: 25,
+                                            child: new Image(
+                                                image: (thumbnailSearch[index] !=null &&
+                                                         thumbnailSearch[index] !="")
+                                                    ? new NetworkImage(
+                                                        thumbnailSearch[index])
+                                                    : new AssetImage(
+                                                        "assets/dummy.png"),
+                                                width: 40.0,
+                                                height: 40.0),
+                                            backgroundColor: Colors.transparent,
+                                          ),
+                                          title: new Padding(
+                                            padding: new EdgeInsets.all(5.0),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: <Widget>[
                                                 Text(
-                                                    date(snap.data
-                                                            .postInfo[index]
-                                                        ["date"]),
-                                                    style: new TextStyle(
-                                                        fontSize: 12.0,
-                                                        color: Colors.black54,
-                                                        fontStyle:
-                                                            FontStyle.italic),
-                                                  ),
-
+                                                  searchTitle[index].toString(),
+                                                  style: new TextStyle(
+                                                      fontSize: 16.0,
+                                                      color: Colors.black87,
+                                                      fontStyle:
+                                                          FontStyle.italic),
+                                                ),
+//                             Row(
+//                               mainAxisAlignment: MainAxisAlignment.end,
+//                               children: <Widget>[
+//                                 Padding(
+//                                   padding: EdgeInsets.all(5),
+//                                   child: Text(
+//                                     date(postDate[index]),
+//                                     style: new TextStyle(
+//                                         fontSize: 12.0,
+//                                         color: Colors.black54,
+//                                         fontStyle: FontStyle.italic),
+//                                   ),
+//                                 ),
+//                               ],
+//                             ),
                                               ],
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => PostDetail(
-                                                snap.data.postInfo[index]["id"]
-                                                    .toString(),
-                                                snap
-                                                    .data
-                                                    .postInfo[index]["title"]
-                                                        ["rendered"]
-                                                    .toString()),
                                           ),
-                                        );
-                                      },
-                                    ),
-                                  );
-                                });
-                          } else if (snap.hasError) {
-                            return Center(
-                              child: Text("Something is wrong"),
-                            );
-                          }
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        },
+                                     onTap: () {
+                                       Navigator.push(
+                                         context,
+                                         MaterialPageRoute(
+                                           builder: (context) => PostDetail(
+                                             searchId[index].toString(),
+                                             searchTitle[index].toString(),
+                                           ),
+                                         ),
+                                       );
+                                     },
+                                        ),
+                                      );
+                                    })
+
+
+                      ):  Center(
+                            child: Text("No match found."),
+                          ),
+//              :Center(child:
+//                  Padding(
+//                       padding: EdgeInsets.all(25),
+//                       child: Text("Sorry!! No record match."),
+//                    )
+//              ),
+
+                recordFinish
+                    ? Text(
+                        "No more record.",
+                        style: TextStyle(color: Colors.black54),
                       )
-                    : Center(
-                        child: CircularProgressIndicator(),
-                      ),
-              )),
-              recordFinish
-                  ? Text(
-                      "No more record.",
-                      style: TextStyle(color: Colors.black54),
-                    )
-                  : Container(
-                      height: isLoading ? 50.0 : 0,
-                      color: Colors.transparent,
-                      child: Center(
-                        child: new CircularProgressIndicator(
-                          backgroundColor: Colors.blue.shade600,
+                    : Container(
+                        height: isLoading ? 50.0 : 0,
+                        color: Colors.transparent,
+                        child: Center(
+                          child: new CircularProgressIndicator(
+                            backgroundColor: Colors.blue.shade600,
+                          ),
                         ),
-                      ),
-                    ),
-            ],
+                      )
+                ,
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  List<Widget> _buildButtonsWithNames(postInfo,index) {
+  List<Widget> _buildButtonsWithNames(postInfo, index) {
     List<Padding> buttonsList = new List<Padding>();
-    String catName="";
+    String catName = "";
 
-    for ( int i =0;i< postInfo.length;i++) {
+    for (int i = 0; i < postInfo.length; i++) {
       for (int catID = 0; catID < extractAllCategory.length; catID++) {
-        if (postInfo[i].toString() == extractAllCategory[catID]["id"].toString()) {
-            catName = extractAllCategory[catID]["name"];
+        if (postInfo[i].toString() ==
+            extractAllCategory[catID]["id"].toString()) {
+          catName = extractAllCategory[catID]["name"];
           buttonsList.add(new Padding(
               padding: EdgeInsets.all(1),
-                  child: new FlatButton(onPressed: (){
-                    Utility.showMsg(catName);
-                    print(catName.toString());
-                  },
-                    child: Text(
-                       catName, style: TextStyle(color: Colors.white,fontSize: 12),),
-                    color: Colors.black54,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  )
-              ));
+              child: new FlatButton(
+                onPressed: () {
+                  Utility.showMsg(catName);
+                  print(catName.toString());
+                },
+                child: Text(
+                  catName,
+                  style: TextStyle(color: Colors.white, fontSize: 12),
+                ),
+                color: Colors.black54,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
+              )));
         } else {
           continue;
         }
@@ -256,13 +397,16 @@ class MyPostPageState extends State<MyPostPage> {
       // update data and loading status
       setState(() {
         isLoading = false;
-        if (MAX_VALUE_LIST < extractDataPost.length) {
-          if (MAX_VALUE_LIST + 3 <= extractDataPost.length) {
-            MAX_VALUE_LIST = MAX_VALUE_LIST + 3;
+        if (MAX_VALUE_LIST <= postTitle.length) {
+          if (MAX_VALUE_LIST + 10 <= postTitle.length) {
+            MAX_VALUE_LIST = MAX_VALUE_LIST + 10;
           } else {
-            int size = extractDataPost.length - MAX_VALUE_LIST;
+            int size = postTitle.length - MAX_VALUE_LIST;
             MAX_VALUE_LIST = MAX_VALUE_LIST + size;
-            recordFinish = true;
+            pageCount=pageCount+1;
+            getAllPost();
+
+            //recordFinish = true;
           }
         }
       });
@@ -275,45 +419,69 @@ class MyPostPageState extends State<MyPostPage> {
           await http.get(API.BASE_URL + "wp-json/wp/v2/media/" + mediaID);
       if (respose.statusCode == 200) {
         var extractImage = json.decode(respose.body);
-        postThumbnail.add(extractImage["media_details"]["sizes"]["thumbnail"]
-                ["source_url"]
-            .toString());
-        setState(() {
-          imageLoaded = true;
-        });
-      } else {
-        postThumbnail.add("");
-      }
-    } on Exception catch (_) {}
-  }
-
-  var extractDataPost;
-  Future<Posts> getAllPost() async {
-    try {
-      final response = await http.get(API.BASE_URL + API.Post);
-      if (response.statusCode == 200) {
-        // If the call to the server was successful, parse the JSON.
-        extractDataPost = json.decode(response.body);
-        print(extractDataPost);
-        int i;
-        for (i = 0; i < extractDataPost.length; i++) {
-          await new Future.delayed(new Duration(milliseconds: 500));
-          getImagePost(extractDataPost[i]["featured_media"].toString());
+        String imagePath="";
+        if(extractImage["media_details"]["sizes"]["medium"]["source_url"].length>0) {
+          imagePath = extractImage["media_details"]["sizes"]["medium"]["source_url"]
+              .toString();
         }
-        if (i == extractDataPost.length) {
+        if(imagePath!=null||imagePath!="") {
+          postThumbnail.add(imagePath);
+        }else {
+          postThumbnail.add("");
+
+        }
+        print(extractImage["media_details"]["sizes"]["medium"]["source_url"].toString());
+
+        if(postThumbnail.length==postTitle.length) {
           setState(() {
             dataLoaded = true;
           });
         }
-        return Posts.fromJson(json.decode(response.body));
+      } else {
+        postThumbnail.add("");
+      }
+    } on Exception catch (e) {
+      //postThumbnail.add("");
+      print(e);
+    }
+  }
+  static int pageCount=1;
+  var extractDataPost;
+
+  int totlPost;
+  Future<void> getAllPost() async {
+    try {
+      final response = await http.get(API.BASE_URL + API.Post+",per_page=10&page="+pageCount.toString());
+      if (response.statusCode == 200) {
+        // If the call to the server was successful, parse the JSON.
+        extractDataPost = json.decode(response.body);
+        //print(extractDataPost);
+        int i;
+
+        for (i = 0; i < extractDataPost.length; i++) {
+          if(extractDataPost[i]["title"]["rendered"].toString()!="" ||extractDataPost[i]["title"]["rendered"].toString()!=null) {
+            postTitle.add(extractDataPost[i]["title"]["rendered"].toString());
+            postDate.add(extractDataPost[i]["date"].toString());
+            await new Future.delayed(new Duration(milliseconds: 425));
+            getImagePost(extractDataPost[i]["featured_media"].toString());
+          }
+        }
+        //print("response"+pageCount.toString()+extractDataPost);
+
+//          setState(() {
+//            dataLoaded = true;
+//          });
+
+        //return Posts.fromJson(json.decode(response.body));
       } else {
         // If that call was not successful, throw an error.
         throw Exception('Failed to load post');
       }
     } on Exception catch (e) {
-      print("error" + '$e');
+      print("getAllPost() error" + '$e');
     }
   }
+
   var extractAllCategory;
   Future<void> getAllCategory() async {
     try {
@@ -322,20 +490,56 @@ class MyPostPageState extends State<MyPostPage> {
         // If the call to the server was successful, parse the JSON.
         extractAllCategory = json.decode(response.body);
         await Future.delayed(Duration(milliseconds: 500));
-        saveData(extractAllCategory);
+        //saveData(extractAllCategory);
         print(extractDataPost);
       } else {
         // If that call was not successful, throw an error.
         throw Exception('Failed to load post');
       }
     } on Exception catch (e) {
-      print("error" + '$e');
+      print("getAllCategory() error" + '$e');
     }
   }
-  saveData(var category)async{
-    final pref= await SharedPreferences.getInstance();
-    pref.setString("all_category", category);
 
+  saveData(var category) async {
+    final pref = await SharedPreferences.getInstance();
+    pref.setString("all_category", category);
+  }
+  var thumbnailSearch;
+  var searchTitle;
+  var searchId;
+
+  void _change(String value) {
+    thumbnailSearch = new List();
+    searchTitle = new List();
+    searchId = new List();
+
+    if(value==""){
+      setState(() {
+        searching=false;
+      });
+    }
+
+    setState(() {
+      searching=false;
+    });
+    if(!value.isEmpty) {
+      for (int i = 0; i < extractDataPost.length; i++) {
+        if (extractDataPost[i]["title"]["rendered"]
+            .toString()
+            .toLowerCase()
+            .contains(value.toLowerCase())) {
+          searchTitle.add(extractDataPost[i]["title"]["rendered"].toString());
+          searchId.add(extractDataPost[i]["id"].toString());
+          thumbnailSearch.add(postThumbnail[i]);
+          setState(() {
+            searching = true;
+            //searchController.text=value;
+          });
+        }
+      }
+    }
+    //Utility.showMsg(value);
   }
 }
 
