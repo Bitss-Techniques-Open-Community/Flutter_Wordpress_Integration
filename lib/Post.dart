@@ -82,22 +82,29 @@ class MyPostPageState extends State<MyPostPage> {
                     )),
                 title: !isSearch
                     ? Text("All posts")
-                    : TextField(
-                          decoration: InputDecoration(
+                    :   Container(
+                  child: Column(
+                    children: <Widget>[
+                      TextField(
+                        decoration: InputDecoration(
                           //icon: Icon(Icons.search,color: Colors.white,),
                           hintText: "Search post here",
                           hintStyle: TextStyle(
-                          color: Colors.white,
+                            color: Colors.white,
                           ),
-                          ),
-                          style: TextStyle(color: Colors.white),
-                          controller: searchController,
-                          onChanged: searchPost,
-                          textInputAction: TextInputAction.go,
-                          cursorColor: Colors.white,
-                          textAlign: TextAlign.start,
+                        ),
+                        style: TextStyle(color: Colors.white),
+                        controller: searchController,
+                        onChanged: searchPost,
+                        textInputAction: TextInputAction.go,
+                        cursorColor: Colors.white,
+                        textAlign: TextAlign.start,
 
-                          ),
+                      ),
+                    ],
+                  ),
+                ),
+
 
                 leading: IconButton(
                   onPressed: () {
@@ -266,7 +273,7 @@ class MyPostPageState extends State<MyPostPage> {
                   )
                       :(searchTitle.length >0 )? Expanded(
                       child:  ListView.builder(
-                          itemCount: (searchTitle.length == thumbnailSearch.length)?searchTitle.length:thumbnailSearch.length,
+                          itemCount: searchTitle.length,
                           itemBuilder: (context, int index) {
                             return new Card(
                               color: Colors.white,
@@ -576,6 +583,7 @@ class MyPostPageState extends State<MyPostPage> {
         thumbnailSearch = new List();
         searchTitle = new List();
         searchId = new List();
+        searchDate=new List();
         searchCategory=new List();
         searchPosts = json.decode(response.body);
         for(int i=0;i<searchPosts.length;i++){
@@ -594,7 +602,7 @@ class MyPostPageState extends State<MyPostPage> {
         }
 
 
-        print(extractDataPost);
+        //print(extractDataPost);
       } else {
         // If that call was not successful, throw an error.
         throw Exception('Failed to load post');
