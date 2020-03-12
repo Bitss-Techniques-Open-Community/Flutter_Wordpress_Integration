@@ -37,9 +37,9 @@ class PostDetailState extends State<PostDetail> {
     // TODO: implement build
     try {
       return Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.green.shade50,
         appBar: AppBar(
-          backgroundColor: Colors.black54,
+          backgroundColor: Colors.green.shade600,
           title: Text(
             itemTitle,
           ),

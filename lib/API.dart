@@ -9,10 +9,9 @@ class API{
   //wordpress posts
   static String Post="wp-json/wp/v2/posts?_fields=id,title,date,featured_media,categories";
   static String POST_INFO="wp-json/wp/v2/posts/";
+  static String SEARCHPOST="wp-json/wp/v2/posts?search=";
+
   static String ALL_CATEGORY="wp-json/wp/v2/categories?per_page=100";
-
-
-
 
   //wordpress product
   static String PRODUCTS_PIZZA="https://dev.kaarot.com/wp-json/wc/v3/products?consumer_key=ck_fff849a508982855f7fd8fd817a75d7bf24038f2&consumer_secret=cs_bb91f8fe6b6b38789883b31d887ed15230f52382";
