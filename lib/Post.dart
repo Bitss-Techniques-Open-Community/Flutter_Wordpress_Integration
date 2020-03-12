@@ -82,26 +82,45 @@ class MyPostPageState extends State<MyPostPage> {
                     )),
                 title: !isSearch
                     ? Text("All posts")
-                    :   Container(
-                  child: Column(
-                    children: <Widget>[
-                      TextField(
-                        decoration: InputDecoration(
-                          //icon: Icon(Icons.search,color: Colors.white,),
-                          hintText: "Search post here",
-                          hintStyle: TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                        style: TextStyle(color: Colors.white),
-                        controller: searchController,
-                        onChanged: searchPost,
-                        textInputAction: TextInputAction.go,
-                        cursorColor: Colors.white,
-                        textAlign: TextAlign.start,
+                    :   Expanded(
+                  child: Container(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Expanded(
+                              flex: 3,
+                              child: TextField(
+                                decoration: InputDecoration(
+                                  //icon: Icon(Icons.search,color: Colors.white,),
+                                  hintText: "Search post here",
+                                  hintStyle: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                style: TextStyle(color: Colors.white),
+                                controller: searchController,
+                                onChanged: searchClear,
+                                textInputAction: TextInputAction.go,
+                                cursorColor: Colors.white,
+                                textAlign: TextAlign.start,
 
-                      ),
-                    ],
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: FlatButton(
+                                child: Text("Search",style: TextStyle(
+                                  color: Colors.white
+                                ),),
+                                onPressed: ()=>searchPost(searchController.text),
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
 
@@ -636,6 +655,14 @@ class MyPostPageState extends State<MyPostPage> {
     } on Exception catch (e) {
       //postThumbnail.add("");
       print(e);
+    }
+  }
+
+  void searchClear(String value) {
+    if(searchController.text.isEmpty){
+      setState(() {
+        searching=false;
+      });
     }
   }
 }
