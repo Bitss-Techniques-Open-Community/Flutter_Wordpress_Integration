@@ -111,6 +111,7 @@ class MyPostPageState extends State<MyPostPage> {
                             Expanded(
                               flex: 1,
                               child: FlatButton(
+                                color: Colors.green.shade100,
                                 child: Text("Search",style: TextStyle(
                                   color: Colors.white
                                 ),),
