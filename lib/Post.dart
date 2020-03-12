@@ -90,7 +90,7 @@ class MyPostPageState extends State<MyPostPage> {
                         Row(
                           children: <Widget>[
                             Expanded(
-                              flex: 3,
+                              flex: 7,
                               child: TextField(
                                 decoration: InputDecoration(
                                   //icon: Icon(Icons.search,color: Colors.white,),
@@ -109,17 +109,18 @@ class MyPostPageState extends State<MyPostPage> {
                               ),
                             ),
                             Expanded(
-                              flex: 1,
-                              child: FlatButton(
+                              flex: 3,
+                              child: RaisedButton.icon(
+                                icon: Icon(Icons.search),
                                 color: Colors.green.shade100,
-                                child: Text("Search",style: TextStyle(
-                                  color: Colors.white
-                                ),),
+                                label: Container(),
                                 onPressed: ()=>searchPost(searchController.text),
                               ),
                             ),
+
                           ],
-                        )
+                        ),
+
                       ],
                     ),
                   ),
@@ -190,6 +191,7 @@ class MyPostPageState extends State<MyPostPage> {
                             //var data = snap.data.postInfo[index];
                             return new Card(
                                 color: Colors.white,
+                                elevation: 5,
                                 clipBehavior: Clip.antiAlias,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.all(
@@ -291,7 +293,8 @@ class MyPostPageState extends State<MyPostPage> {
                     ),
 
                   )
-                      :(searchTitle.length >0 )? Expanded(
+                      :(searchTitle.length >0 && !notFound )
+                      ? Expanded(
                       child:  ListView.builder(
                           itemCount: searchTitle.length,
                           itemBuilder: (context, int index) {
@@ -363,9 +366,13 @@ class MyPostPageState extends State<MyPostPage> {
                           })
 
 
-                  ):  Center(
-                    child: Text("No match found."),
-                  ),
+                  ):
+                      Expanded(
+                        child:Center(
+                          child: Text("No match found."),
+                        ) ,
+                      )
+                        ,
 //              :Center(child:
 //                  Padding(
 //                       padding: EdgeInsets.all(25),
@@ -420,8 +427,8 @@ class MyPostPageState extends State<MyPostPage> {
                 ),
                 color: Colors.green.shade300,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8)),
-              )));
+                    borderRadius: BorderRadius.circular(8),),
+              ),),);
         } else {
           continue;
         }
@@ -592,9 +599,11 @@ class MyPostPageState extends State<MyPostPage> {
   }
 
   var searchPosts;
+  bool notFound=false;
   Future<void> searchPost(String value) async {
     setState(() {
       searching=false;
+      notFound=false;
     });
     try {
       final response = await http.get(API.BASE_URL + API.SEARCHPOST+searchController.text);
@@ -606,6 +615,12 @@ class MyPostPageState extends State<MyPostPage> {
         searchDate=new List();
         searchCategory=new List();
         searchPosts = json.decode(response.body);
+        if(searchPosts.length<=0){
+          setState(() {
+            searching=true;
+            notFound=true;
+          });
+        }
         for(int i=0;i<searchPosts.length;i++){
           if(searchPosts[i]["title"]["rendered"].toString()!="" && searchPosts[i]["title"]["rendered"].toString()!=null) {
             searchId.add(searchPosts[i]["id"].toString());
