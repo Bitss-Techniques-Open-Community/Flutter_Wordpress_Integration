@@ -281,7 +281,8 @@ class MyPostPageState extends State<MyPostPage> {
                                                 postId[index]
                                                     .toString(),
                                                 postTitle[index]
-                                                    .toString()),
+                                                    .toString(),postThumbnail[index].toString()),
+
                                       ),
                                     );
                                   },
@@ -357,6 +358,7 @@ class MyPostPageState extends State<MyPostPage> {
                                       builder: (context) => PostDetail(
                                         searchId[index].toString(),
                                         searchTitle[index].toString(),
+                                        thumbnailSearch[index].toString()
                                       ),
                                     ),
                                   );

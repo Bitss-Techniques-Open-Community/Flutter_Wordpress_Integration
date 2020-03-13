@@ -9,22 +9,22 @@ import 'API.dart';
 import 'AppBrowser.dart';
 
 class PostDetail extends StatefulWidget {
-  var itemTitle, itemID;
-  PostDetail(this.itemID, this.itemTitle);
+  var itemTitle, itemID,itemImage;
+  PostDetail(this.itemID, this.itemTitle,this.itemImage);
 
   @override
   PostDetailState createState() {
     // TODO: implement createState
-    return PostDetailState(itemID: itemID, itemTitle: itemTitle);
+    return PostDetailState(itemID: itemID, itemTitle: itemTitle,itemImage: itemImage);
   }
 }
 
 class PostDetailState extends State<PostDetail> {
   var htmlContent;
-  var itemTitle, itemID;
+  var itemTitle, itemID,itemImage;
   Future<PostInfo> post;
 
-  PostDetailState({this.itemID, this.itemTitle});
+  PostDetailState({this.itemID, this.itemTitle,this.itemImage});
   @override
   void initState() {
     // TODO: implement initState
@@ -38,18 +38,38 @@ class PostDetailState extends State<PostDetail> {
     try {
       return Scaffold(
         backgroundColor: Colors.green.shade50,
-        appBar: AppBar(
-          backgroundColor: Colors.green.shade600,
-          title: Text(
-            itemTitle,
-          ),
-          leading: IconButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            icon: Icon(Icons.arrow_back),
-          ),
-        ),
+        body:NestedScrollView(
+          headerSliverBuilder: (BuildContext context,bool innerBoxScroll){
+            return <Widget>[
+              SliverAppBar(
+                backgroundColor: Colors.green.shade700,
+                expandedHeight: MediaQuery.of(context).size.height/3,
+                floating: false,
+                pinned: true,
+                flexibleSpace: FlexibleSpaceBar(
+                    centerTitle: true,
+                    title: Text("",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16.0,
+                        )),
+                    background: Image.network(
+                      itemImage,
+                      fit: BoxFit.cover,
+                    )),
+                title: Text(itemTitle),
+                leading: IconButton(
+                  onPressed: () {
+                    Navigator.pop(this.context);
+                  },
+                  icon: Icon(Icons.arrow_back),
+                ),
+
+              ),
+            ];
+          },
+
+
         body: Container(child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             return SingleChildScrollView(
@@ -120,6 +140,7 @@ class PostDetailState extends State<PostDetail> {
                         ])));
           },
         )),
+        )
       );
     } on Exception catch (_) {
       return null;
