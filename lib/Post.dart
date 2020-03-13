@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -51,9 +52,14 @@ class MyPostPageState extends State<MyPostPage> {
     postId=new List();
     searchController.text="";
     pageCount=1;
-    //postThumbnail.clear();
-    getAllCategory();
+    connected=true;
+    const fiveSeconds = const Duration(milliseconds: 500);
+    //new Timer.periodic(fiveSeconds, (Timer t)=>checkInternet());
     getAllPost();
+    getAllCategory();
+    //checkInternet();
+    //postThumbnail.clear();
+
   }
 
   @override
@@ -71,15 +77,12 @@ class MyPostPageState extends State<MyPostPage> {
                 pinned: true,
                 flexibleSpace: FlexibleSpaceBar(
                     centerTitle: true,
-                    title: Text("",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16.0,
-                        )),
-                    background: Image.network(
+
+                    background: connected? Image.network(
                       "https://priyanka.guru/wp-content/uploads/mother-1171569_1920-1-1024x683.jpg",
                       fit: BoxFit.cover,
-                    )),
+                    ):Container(),
+                ),
                 title: !isSearch
                     ? Text("All posts")
                     :   Expanded(
@@ -105,7 +108,6 @@ class MyPostPageState extends State<MyPostPage> {
                                 textInputAction: TextInputAction.go,
                                 cursorColor: Colors.white,
                                 textAlign: TextAlign.start,
-
                               ),
                             ),
                             Expanded(
@@ -141,9 +143,10 @@ class MyPostPageState extends State<MyPostPage> {
                       color: Colors.white,
                     ),
                     onPressed: () {
-                      Utility.showMsg("search");
+                     // Utility.showMsg("search");
                       setState(() {
                         this.isSearch = false;
+                        searching=false;
                       });
                     },
                   )
@@ -163,7 +166,7 @@ class MyPostPageState extends State<MyPostPage> {
               ),
             ];
           },
-          body: Center(
+          body: connected ? Center(
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -399,13 +402,42 @@ class MyPostPageState extends State<MyPostPage> {
                 ],
               ),
             ),
+          ):Expanded(
+            child: Center(heightFactor: MediaQuery.of(context).size.height,
+              child:Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Image(image: AssetImage("assets/no_internet.png"),height: 250,),
+                  Text("Please Check your Internet Connection.",style: TextStyle(fontSize: 16,color: Colors.black54),),
+                ],
+              )
+
+            ),
           ),
-        )
-
-
-
+        ),
       ),
     );
+  }
+   bool connected=false;
+   Future<void> checkInternet() async{
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        setState(() {
+          connected=true;
+        });
+        print('connected');
+      } else{
+        setState(() {
+          connected=false;
+        });
+      }
+    } on SocketException catch (_) {
+      print('not connected');
+      setState(() {
+        connected=false;
+      });
+    }
   }
 
   List<Widget> _buildButtonsWithNames(postInfo) {
@@ -562,45 +594,8 @@ class MyPostPageState extends State<MyPostPage> {
   var searchId;
   var searchDate;
   var searchCategory;
-  void _change(String value) {
-
-
-
-
-
-    thumbnailSearch = new List();
-    searchTitle = new List();
-    searchId = new List();
-
-    if(value==""){
-      setState(() {
-        searching=false;
-      });
-    }
-
-    setState(() {
-      searching=false;
-    });
-    if(!value.isEmpty) {
-      for (int i = 0; i < extractDataPost.length; i++) {
-        if (extractDataPost[i]["title"]["rendered"]
-            .toString()
-            .toLowerCase()
-            .contains(value.toLowerCase())) {
-          searchTitle.add(extractDataPost[i]["title"]["rendered"].toString());
-          searchId.add(extractDataPost[i]["id"].toString());
-          thumbnailSearch.add(postThumbnail[i]);
-          setState(() {
-            searching = true;
-            //searchController.text=value;
-          });
-        }
-      }
-    }
-    //Utility.showMsg(value);
-  }
-
   var searchPosts;
+
   bool notFound=false;
   Future<void> searchPost(String value) async {
     setState(() {

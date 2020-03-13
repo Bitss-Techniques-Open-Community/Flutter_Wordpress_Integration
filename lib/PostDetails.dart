@@ -48,29 +48,22 @@ class PostDetailState extends State<PostDetail> {
                 pinned: true,
                 flexibleSpace: FlexibleSpaceBar(
                     centerTitle: true,
-                    title: Text("",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16.0,
-                        )),
                     background: Image.network(
                       itemImage,
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fill,
                     )),
-                title: Text(itemTitle),
+                title: Text(itemTitle,maxLines: 2,),
                 leading: IconButton(
                   onPressed: () {
                     Navigator.pop(this.context);
                   },
                   icon: Icon(Icons.arrow_back),
                 ),
-
               ),
             ];
           },
 
-
-        body: Container(child: LayoutBuilder(
+         body: Container(child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             return SingleChildScrollView(
                 child: ConstrainedBox(

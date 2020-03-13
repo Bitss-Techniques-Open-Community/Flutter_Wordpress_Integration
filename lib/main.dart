@@ -19,9 +19,11 @@ class HomePageState extends State<HomePage>{
     // TODO: implement build
     return MaterialApp(
       home: Scaffold(
+
         appBar: AppBar(
-          title: Text("Home Page"),
-          backgroundColor: Colors.black54,
+
+          title: Center(child:Text("Welcome To Family"),),
+          backgroundColor: Colors.green.shade700,
         ),
         body: Container(
           child: Column(
@@ -35,7 +37,7 @@ class HomePageState extends State<HomePage>{
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)
                   ),
-                  color: Colors.black26,
+                  color: Colors.green.shade400,
                   textColor: Colors.white,
                   onPressed: (){
                     Navigator.push(
@@ -54,7 +56,7 @@ class HomePageState extends State<HomePage>{
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)
                   ),
-                  color: Colors.black26,
+                  color: Colors.green.shade400,
                   textColor: Colors.white,
                   onPressed: (){
                     Navigator.push(
