@@ -55,12 +55,12 @@ class MyPostPageState extends State<MyPostPage> {
     postExcerpt=new List();
     searchController.text="";
     pageCount=1;
-    connected=true;
-    const fiveSeconds = const Duration(milliseconds: 500);
+    connected=false;
+    //const fiveSeconds = const Duration(milliseconds: 500);
     //new Timer.periodic(fiveSeconds, (Timer t)=>checkInternet());
     getAllPost();
     getAllCategory();
-    //checkInternet();
+    checkInternet();
     //postThumbnail.clear();
 
   }
