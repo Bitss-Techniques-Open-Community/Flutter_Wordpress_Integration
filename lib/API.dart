@@ -7,7 +7,7 @@ class API{
   static String PAGE_INFO="wp-json/wp/v2/pages/";
 
   //wordpress posts
-  static String Post="wp-json/wp/v2/posts?_fields=id,title,date,featured_media,categories";
+  static String Post="wp-json/wp/v2/posts?_fields=id,title,date,featured_media,categories,excerpt";
   static String POST_INFO="wp-json/wp/v2/posts/";
   static String SEARCHPOST="wp-json/wp/v2/posts?search=";
 

@@ -107,7 +107,7 @@ class SubDetailsState extends State<SubDetails>{
                                       return Padding(
                                         padding: EdgeInsets.all(10),
                                         child: HtmlWidget(
-                                          snapshot.data.pagetInfo["content"]["rendered"]+"\n\n"+snapshot.data.pagetInfo["excerpt"]["rendered"],
+                                          snapshot.data.pagetInfo["content"]["rendered"],
                                           enableCaching: true,
                                           hyperlinkColor: Colors.blue,
                                           onTapUrl: (url) => (url.contains(API.BASE_URL)|| url.contains("http://priyanka.guru/") )? Navigator.push(

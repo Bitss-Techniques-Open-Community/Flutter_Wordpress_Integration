@@ -82,10 +82,7 @@ class PostDetailState extends State<PostDetail> {
                                   padding: EdgeInsets.all(10),
                                   child: HtmlWidget(
                                     snapshot.data.postInfo["content"]
-                                            ["rendered"] +
-                                        "\n\n" +
-                                        snapshot.data.postInfo["excerpt"]
-                                            ["rendered"],
+                                            ["rendered"] ,
                                     enableCaching: false,
                                     hyperlinkColor: Colors.blue,
                                     onTapUrl: (url) =>

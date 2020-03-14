@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -36,6 +37,7 @@ class MyPostPageState extends State<MyPostPage> {
   var postCategory;
   List<String> postThumbnail;
   List<String>postId;
+  List<String>postExcerpt;
 
   @override
   void initState() {
@@ -50,6 +52,7 @@ class MyPostPageState extends State<MyPostPage> {
     postCategory = new List();
     postThumbnail= new List();
     postId=new List();
+    postExcerpt=new List();
     searchController.text="";
     pageCount=1;
     connected=true;
@@ -239,6 +242,13 @@ class MyPostPageState extends State<MyPostPage> {
                                               fontStyle:
                                               FontStyle.italic),
                                         ),
+                                        Padding(
+                                          padding: EdgeInsets.only(top: 2,bottom: 2,right: 2),
+                                          child: HtmlWidget(
+                                            postExcerpt[index].toString(),textStyle: TextStyle(color: Colors.black38,fontSize: 12),
+
+                                          ),
+                                        ),
                                         Column(
                                           crossAxisAlignment:
                                           CrossAxisAlignment
@@ -335,6 +345,36 @@ class MyPostPageState extends State<MyPostPage> {
                                             color: Colors.black87,
                                             fontStyle:
                                             FontStyle.italic),
+                                      ),
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Padding(
+                                            padding: EdgeInsets.only(top: 2,bottom: 2,right: 2),
+                                            child: HtmlWidget(
+                                              searchExcerpt[index].toString(),textStyle: TextStyle(color: Colors.black38,fontSize: 12),
+
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+
+                                      Column(
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment
+                                            .start,
+                                        children: <Widget>[
+                                          Padding(
+                                            padding:
+                                            EdgeInsets.all(2),
+                                            child: Wrap(
+                                              children:
+                                              _buildButtonsWithNames(
+                                                  searchCategory[index]
+                                              ),
+                                            ),
+                                          )
+                                        ],
                                       ),
                              Row(
                                mainAxisAlignment: MainAxisAlignment.end,
@@ -547,6 +587,7 @@ class MyPostPageState extends State<MyPostPage> {
             postTitle.add(extractDataPost[i]["title"]["rendered"].toString());
             postDate.add(extractDataPost[i]["date"].toString());
             postCategory.add(extractDataPost[i]["categories"]);
+            postExcerpt.add(extractDataPost[i]["excerpt"]["rendered"]);
             await new Future.delayed(new Duration(milliseconds: 425));
             if(extractDataPost[i]["featured_media"].toString()!="0") {
               getImagePost(extractDataPost[i]["featured_media"].toString());
@@ -595,7 +636,7 @@ class MyPostPageState extends State<MyPostPage> {
   var searchDate;
   var searchCategory;
   var searchPosts;
-
+  var searchExcerpt;
   bool notFound=false;
   Future<void> searchPost(String value) async {
     setState(() {
@@ -611,6 +652,7 @@ class MyPostPageState extends State<MyPostPage> {
         searchId = new List();
         searchDate=new List();
         searchCategory=new List();
+        searchExcerpt=new List();
         searchPosts = json.decode(response.body);
         if(searchPosts.length<=0){
           setState(() {
@@ -624,6 +666,7 @@ class MyPostPageState extends State<MyPostPage> {
             searchTitle.add(searchPosts[i]["title"]["rendered"].toString());
             searchDate.add(searchPosts[i]["date"].toString());
             searchCategory.add(searchPosts[i]["categories"]);
+            searchExcerpt.add(searchPosts[i]["excerpt"]["rendered"]);
             await new Future.delayed(new Duration(milliseconds: 425));
             if(searchPosts[i]["featured_media"].toString()!="0") {
               getSearchImagePost(searchPosts[i]["featured_media"].toString());
